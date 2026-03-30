@@ -1,0 +1,81 @@
+{
+  "name": "roadflow-ai-lite",
+  "version": "1.0.0",
+  "description": "Roadflow AI Lite V1",
+  "main": "electron/main.js",
+  "author": "Roadflow",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "electron:dev": "electron .",
+    "build:win": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.roadflow.ailite.v1",
+    "productName": "Roadflow AI Lite V1",
+    "copyright": "Roadflow",
+    "asar": true,
+    "directories": {
+      "output": "dist-electron",
+      "buildResources": "build-resources"
+    },
+    "files": [
+      "electron/**/*",
+      "frontend/dist/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "backend",
+        "to": "backend",
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**",
+          "!**/*.pyc",
+          "!.venv/**",
+          "!**/.venv/**",
+          "!roadflow.db",
+          "!*.db"
+        ]
+      },
+      {
+        "from": "python-embedded",
+        "to": "python-embedded",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "requestedExecutionLevel": "asInvoker",
+      "icon": "build-resources/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Roadflow AI Lite V1",
+      "menuCategory": "Roadflow",
+      "installerIcon": "build-resources/icon.ico",
+      "uninstallerIcon": "build-resources/icon.ico",
+      "installerHeaderIcon": "build-resources/icon.ico",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

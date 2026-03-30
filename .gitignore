@@ -1,0 +1,15 @@
+dist-electron/
+dist/
+python-embedded/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+*.pyo
+*.db
+.env
+*.log
+.venv/
+*.tar.gz
+*.gz
