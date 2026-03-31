@@ -457,28 +457,36 @@ export default function App() {
                       <span style={{ marginLeft: 8, fontSize: 12, color: '#64748b' }}>{selectedRec.code}</span>
                       <span style={{ marginLeft: 8, fontSize: 11, background: '#1e293b', padding: '2px 6px', borderRadius: 4, color: '#94a3b8' }}>{selectedRec.theme}</span>
                     </div>
-                    <button onClick={() => setSelectedRec(null)} style={{ background: 'transparent', border: 'none', color: '#64748b', fontSize: 16, cursor: 'pointer' }}>✕</button>
+                    <button onClick={() => setSelectedRec(null)} style={{ background: 'transparent', border: 'none', color: '#64748b', fontSize: 16, cursor: 'pointer' }}>X</button>
                   </div>
                   <div style={{ marginBottom: 6, fontSize: 12, color: '#94a3b8', fontWeight: 600 }}>
-                    FinalScore 구성 분석: <span style={{ color: selectedRec.final_score >= 80 ? '#4ade80' : selectedRec.final_score >= 70 ? '#facc15' : '#f87171', fontSize: 15 }}>{selectedRec.final_score}점</span>
+                    FinalScore: <span style={{ color: selectedRec.final_score >= 80 ? '#4ade80' : selectedRec.final_score >= 70 ? '#facc15' : '#f87171', fontSize: 15 }}>{selectedRec.final_score}pt</span>
                   </div>
                   {[
-                    { label: '기본점수 (BaseScore)', val: selectedRec.base_score, max: 45, color: '#3b82f6', desc: '거래대금, 등락률, 체결강도, 이격도, 거래량' },
-                    { label: '테마점수 (ThemeScore)', val: selectedRec.theme_score, max: 20, color: '#8b5cf6', desc: '테마 강도, 주도주 여부, 뉴스 품질' },
-                    { label: '리더점수 (LeaderScore)', val: selectedRec.leader_score, max: 15, color: '#06b6d4', desc: '기관/외인 수급, 전일 상한가 여부' },
-                    { label: '확장점수 (ExpScore)', val: selectedRec.expansion_score, max: 10, color: '#10b981', desc: '동반 상승 종목 수, 후발주 움직임' },
-                    { label: '장전점수 (PreOpen)', val: selectedRec.preopen_score, max: 10, color: '#f59e0b', desc: '나스닥 선물, 갭 방향, 호가창 강도' },
-                    { label: '리스크 차감', val: selectedRec.risk_penalty, max: 0, color: '#ef4444', desc: 'VI 발동 이력, 급락 이력' },
+                    { label: 'BaseScore', val: selectedRec.base_score, max: 40, color: '#3b82f6', desc: '거래대금, 수급, 차트돌파, 뉴스' },
+                    { label: 'ThemeScore', val: selectedRec.theme_score, max: 20, color: '#8b5cf6', desc: '테마 강도, 순환매, 뉴스 빈도' },
+                    { label: 'LeaderScore', val: selectedRec.leader_score, max: 15, color: '#06b6d4', desc: '대장/준대장, 거래량 폭발' },
+                    { label: 'ExpansionScore', val: selectedRec.expansion_score, max: 10, color: '#10b981', desc: '소형주 수급 쏠림, 후발 확산' },
+                    { label: 'PreOpenScore', val: selectedRec.preopen_score, max: 10, color: '#f59e0b', desc: '시초가, 장초반 거래대금' },
+                    { label: 'RiskPenalty', val: selectedRec.risk_penalty, max: 0, color: '#ef4444', desc: '시총 과대, 기관/외인 이탈' },
                   ].map(({ label, val, max, color, desc }) => (
                     <div key={label} style={{ marginBottom: 8 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 3 }}>
                         <span style={{ color: '#94a3b8' }}>{label}</span>
-                        <span style={{ color, fontWeight: 700 }}>{val > 0 ? '+' : ''}{val} / {max}점</span>
+                        <span style={{ color, fontWeight: 700 }}>{val > 0 ? '+' : ''}{val} / {max}pt</span>
                       </div>
                       <div style={{ background: '#1e293b', borderRadius: 3, height: 6, overflow: 'hidden' }}>
-                        <div style={{ width: max > 0 ? `${Math.max(0, (val / max) * 100)}%` : `${Math.abs(val) * 10}%`, height: '100%', borderRadius: 3, background: color, transition: 'width 0.4s' }} />
+                        <div style={{ width: max > 0 ? String(Math.max(0, (val / max) * 100)) + '%' : String(Math.abs(val) * 10) + '%', height: '100%', borderRadius: 3, background: color, transition: 'width 0.4s' }} />
                       </div>
                       <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>{desc}</div>
+                      <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>
+                        {label === 'BaseScore' && (val >= 30 ? '거래대금 증가 + 수급 유입 확인' : val >= 20 ? '거래대금 보통, 수급 중립' : '거래대금 약세, 수급 이탈')}
+                        {label === 'ThemeScore' && (val >= 15 ? '주도 테마 직접 소속, 순환매 강도 높음' : val >= 10 ? '테마 연관, 중간 강도' : '테마 연관성 낮음')}
+                        {label === 'LeaderScore' && (val >= 12 ? '대장주 또는 준대장, 거래량 폭발' : val >= 8 ? '리더 후보, 모멘텀 보통' : '리더 강도 약함')}
+                        {label === 'ExpansionScore' && (val >= 8 ? '소형주 수급 쏠림, 후발 확산 중' : val >= 5 ? '확산 초기 단계' : '확산 미확인')}
+                        {label === 'PreOpenScore' && (val >= 8 ? '시초가 갭 적정, 첫 3분 거래대금 양호' : val >= 5 ? '장초반 관찰 필요' : '장초반 약세')}
+                        {label === 'RiskPenalty' && (val < -3 ? '시총 과대 또는 기관/외인 대규모 이탈' : val < 0 ? '일부 리스크 감지' : '리스크 없음')}
+                      </div>
                     </div>
                   ))}
                 </div>
